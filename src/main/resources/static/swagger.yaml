@@ -1,0 +1,17 @@
+swagger: "2.0"
+info:
+  description: "API REST description in order to manage gateways. Master devices that control multiple peripheral devices."
+  version: "1.0.0"
+  title: "Gateways Management"
+  termsOfService: ""
+  contact:
+    email: "edpadron.cu@gmail.com"
+host: "localhost:8080"
+#basePath: "/api"
+tags:
+- name: "Gateway"
+  description: "Services related to gateways management"
+
+schemes:
+- "http"
+#- "https"
