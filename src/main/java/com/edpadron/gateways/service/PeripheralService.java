@@ -1,6 +1,9 @@
 package com.edpadron.gateways.service;
 
 import com.edpadron.gateways.entity.Peripheral;
+import com.edpadron.gateways.exceptions.ApiError;
+import com.edpadron.gateways.exceptions.StatusException;
+import com.edpadron.gateways.exceptions.UidException;
 import com.edpadron.gateways.repository.PeripheralRepository;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -9,6 +12,8 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import javax.validation.ValidationException;
+import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,6 +26,13 @@ public class PeripheralService {
     private PeripheralRepository peripheralRepository;
 
     public Peripheral addPeripheral(Peripheral peripheral){
+        if (!peripheral.isValidStatus())
+            throw new StatusException();
+
+        if (!peripheral.isValidUid())
+            throw new UidException();
+
+        peripheral.setCreated_at(LocalDateTime.now());
         return peripheralRepository.save(peripheral);
     }
 

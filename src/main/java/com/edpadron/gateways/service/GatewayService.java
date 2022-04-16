@@ -1,21 +1,15 @@
 package com.edpadron.gateways.service;
 
 import com.edpadron.gateways.entity.Gateway;
+import com.edpadron.gateways.exceptions.Ipa4Exception;
 import com.edpadron.gateways.repository.GatewayRepository;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
-import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Service
@@ -27,6 +21,8 @@ public class GatewayService {
     private GatewayRepository gatewayRepository;
 
     public Gateway addGateway(Gateway gateway){
+        if (!gateway.isValidIpv4())
+            throw new Ipa4Exception();
         return gatewayRepository.save(gateway);
     }
 

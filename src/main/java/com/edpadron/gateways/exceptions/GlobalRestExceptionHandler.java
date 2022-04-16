@@ -27,6 +27,7 @@ import javax.validation.ConstraintViolationException;
 import javax.validation.ValidationException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 @ControllerAdvice
 public class GlobalRestExceptionHandler extends ResponseEntityExceptionHandler {
@@ -102,6 +103,20 @@ public class GlobalRestExceptionHandler extends ResponseEntityExceptionHandler {
         return helper.httpResponse(false, apiError, HttpStatus.UNPROCESSABLE_ENTITY);
     }
 
+    @ExceptionHandler({ org.springframework.dao.DataIntegrityViolationException.class })
+    public ResponseEntity<Object> handleConstraintViolation(org.springframework.dao.DataIntegrityViolationException ex, WebRequest request) throws Throwable {
+        logger.error(ex.getClass().getName() + " " + ex.getLocalizedMessage());
+        String message = ex.getLocalizedMessage();
+        if (ex.getCause() instanceof org.hibernate.exception.ConstraintViolationException){
+            message = ((org.hibernate.exception.ConstraintViolationException) ex.getCause()).getSQLException().getLocalizedMessage();
+            if (message.contains("violates unique constraint"))
+                message = "serial_number value is not unique, already exist.";
+        }
+
+        ApiError apiError = new ApiError("Database validation error", message);
+        return helper.httpResponse(false, apiError, HttpStatus.UNPROCESSABLE_ENTITY);
+    }
+
     @ExceptionHandler({ ValidationException.class })
     public ResponseEntity<Object> handleValidationException(ValidationException ex, WebRequest request) {
         logger.error(ex.getClass().getName() + " " + ex.getLocalizedMessage());
@@ -139,6 +154,29 @@ public class GlobalRestExceptionHandler extends ResponseEntityExceptionHandler {
         ex.getSupportedMediaTypes().forEach(t -> builder.append(t + " "));
         ApiError apiError = new ApiError(ex.getLocalizedMessage(), builder.substring(0, builder.length() - 2));
         return helper.httpResponse(false, apiError, HttpStatus.UNSUPPORTED_MEDIA_TYPE);
+    }
+
+    @ExceptionHandler({ Ipa4Exception.class })
+    public ResponseEntity<?> handleAll(Ipa4Exception ex, WebRequest request) {
+        logger.error(ex.getClass().getName() + " " + ex.getLocalizedMessage());
+        ApiError apiError = new ApiError("Validation error", ex.getMessage());
+        return helper.httpResponse(false, apiError, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler({ StatusException.class })
+    public ResponseEntity<?> handleAll(StatusException ex, WebRequest request) {
+        return CustomValidationErrors(ex);
+    }
+
+    @ExceptionHandler({ UidException.class })
+    public ResponseEntity<?> handleAll(UidException ex, WebRequest request) {
+        return CustomValidationErrors(ex);
+    }
+
+    private ResponseEntity<?> CustomValidationErrors(Exception ex) {
+        logger.error(ex.getClass().getName() + " " + ex.getLocalizedMessage());
+        ApiError apiError = new ApiError("Validation error", ex.getMessage());
+        return helper.httpResponse(false, apiError, HttpStatus.UNPROCESSABLE_ENTITY);
     }
 
     @ExceptionHandler({ Exception.class })
