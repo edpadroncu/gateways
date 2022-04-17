@@ -3,24 +3,28 @@ package com.edpadron.gateways.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
-import java.math.BigInteger;
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.regex.Pattern;
 
-
+@NoArgsConstructor
 @Data
 @Entity
 @Table(name="peripheral")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Peripheral implements Serializable {
+
+    public Peripheral(String uid, String vendor, LocalDateTime created_at, String status, Gateway gateway) {
+        this.uid = uid;
+        this.vendor = vendor;
+        this.created_at = created_at;
+        this.status = status;
+        this.gateway = gateway;
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

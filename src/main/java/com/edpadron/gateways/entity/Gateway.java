@@ -1,27 +1,29 @@
 package com.edpadron.gateways.entity;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.io.Serializable;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-
 @Data
+@NoArgsConstructor
 @Entity
 @Table(name="gateway")
 @JsonIgnoreProperties(value = {"hibernateLazyInitializer","handler"})
 public class Gateway implements Serializable {
+
+    public Gateway(String serial_number, String name, String ipv4) {
+        this.serial_number = serial_number;
+        this.name = name;
+        this.ipv4 = ipv4;
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -156,8 +156,8 @@ public class GlobalRestExceptionHandler extends ResponseEntityExceptionHandler {
         return helper.httpResponse(false, apiError, HttpStatus.UNSUPPORTED_MEDIA_TYPE);
     }
 
-    @ExceptionHandler({ Ipa4Exception.class })
-    public ResponseEntity<?> handleAll(Ipa4Exception ex, WebRequest request) {
+    @ExceptionHandler({ Ipv4Exception.class })
+    public ResponseEntity<?> handleAll(Ipv4Exception ex, WebRequest request) {
         logger.error(ex.getClass().getName() + " " + ex.getLocalizedMessage());
         ApiError apiError = new ApiError("Validation error", ex.getMessage());
         return helper.httpResponse(false, apiError, HttpStatus.INTERNAL_SERVER_ERROR);
