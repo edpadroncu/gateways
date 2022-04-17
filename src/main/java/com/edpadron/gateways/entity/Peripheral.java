@@ -24,6 +24,7 @@ public class Peripheral implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long idp;
 
     @Column(name = "uid", nullable = false)

@@ -6,13 +6,553 @@ info:
   termsOfService: ""
   contact:
     email: "edpadron.cu@gmail.com"
-host: "localhost:8080"
+host: "localhost:8081"
 basePath: "/api"
 tags:
 - name: "Gateway"
   description: "Services related to gateways management"
+- name: "Peripheral"
+  description: "Services related to peripherals devices"
 
 schemes:
-#- "http"
+- "http"
 - "https"
 
+definitions:
+  Gateway:
+    properties:
+      id:
+        type: number
+        example: 1
+      serial_number:
+        type: string
+        example: "ASXPPYW-199"
+      name:
+        type: string
+        example: "GATEWAY_NAME_1"
+      ipv4:
+        type: string
+        example: "127.0.0.1"
+
+  Peripheral:
+    properties:
+      id:
+        type: number
+        example: 1
+      uid:
+        type: number
+        example: 123412345622341
+      vendor:
+        type: string
+        example: "VENDOR_NAME_1"
+      created_at:
+        type: "string"
+        example: "2022-04-16T22:40:35.033"
+        format: "yyyy-MM-ddTHH:mm:ss:SSS"
+      status:
+        type: string
+        example: "online"
+        enum:
+          - online
+          - offline
+
+  422Response:
+    properties:
+      success:
+        type: boolean
+        example: false
+      response:
+        properties:
+          data:
+            properties:
+              message:
+                type: string
+              error:
+                type: array
+                items:
+                  type: string
+              debug_error:
+                type: string
+
+paths:
+  /gateways:
+    get:
+      tags:
+      - Gateway
+      summary: "Get all"
+      description: "Getting all gateways without their peripherals"
+      operationId: "getAllGtw"
+      produces:
+      - "application/json"
+      responses:
+        "200":
+          description: "Successful operation"
+          schema:
+            properties:
+              success:
+                type: boolean
+              response:
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/definitions/Gateway"
+
+        "422":
+          description: "Rising validations and controlled exceptions"
+          schema:
+            $ref: "#/definitions/422Response"
+
+        "500":
+          description: "Exception not controlled"
+          schema:
+            $ref: "#/definitions/422Response"
+    post:
+      tags:
+      - Gateway
+      summary: "Add"
+      description: "Adding a gateway device"
+      operationId: "addGtw"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Payload. Incoming data"
+        required: true
+        schema:
+          properties:
+            serial_number:
+              type: string
+              example: "ASXPPYW-199"
+            name:
+              type: string
+              example: "GATEWAY_NAME_1"
+            ipv4:
+              type: string
+              example: "127.0.0.1"
+
+      responses:
+        "201":
+          description: "Successful operation"
+          schema:
+            properties:
+              success:
+                type: boolean
+              response:
+                properties:
+                  data:
+                    $ref: "#/definitions/Gateway"
+
+        "422":
+          description: "Rising validations and controlled exceptions"
+          schema:
+            $ref: "#/definitions/422Response"
+
+        "500":
+          description: "Exception not controlled"
+          schema:
+            $ref: "#/definitions/422Response"
+  /gateways/{id}:
+    get:
+      tags:
+      - Gateway
+      summary: "Get by id"
+      description: "Getting a gateway by id"
+      operationId: "getByIdGtw"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "path"
+        name: "id"
+        required: true
+        description: "Gateway id"
+        type: number
+      responses:
+        "200":
+          description: "Successful operation"
+          schema:
+            properties:
+              success:
+                type: boolean
+              response:
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: "#/definitions/Gateway"
+
+        "422":
+          description: "Rising validations and controlled exceptions"
+          schema:
+            $ref: "#/definitions/422Response"
+
+        "500":
+          description: "Exception not controlled"
+          schema:
+            $ref: "#/definitions/422Response"
+    delete:
+      tags:
+      - Gateway
+      summary: "Delete by id"
+      description: "Deleting a gateway by id"
+      operationId: "deleteByIdGtw"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "path"
+        name: "id"
+        required: true
+        description: "Gateway id"
+        type: number
+      responses:
+        "200":
+          description: "Successful operation"
+          schema:
+            properties:
+              success:
+                type: boolean
+              response:
+                properties:
+                  data:
+                    type: string
+                    example: "Deleted"
+
+        "422":
+          description: "Rising validations and controlled exceptions"
+          schema:
+            $ref: "#/definitions/422Response"
+
+        "500":
+          description: "Exception not controlled"
+          schema:
+            $ref: "#/definitions/422Response"
+  /gateways/details:
+    get:
+      tags:
+      - Gateway
+      summary: "Get all details"
+      description: "Getting all gateways with their peripherals"
+      operationId: "getAllDetails"
+      produces:
+      - "application/json"
+      responses:
+        "200":
+          description: "Successful operation"
+          schema:
+            properties:
+              success:
+                type: boolean
+              response:
+                properties:
+                  data:
+                    type: array
+                    items:
+                      properties:
+                        id:
+                          type: number
+                          example: 1
+                        serial_number:
+                          type: string
+                          example: "ASXPPYW-199"
+                        name:
+                          type: string
+                          example: "GATEWAY_NAME_1"
+                        ipv4:
+                          type: string
+                          example: "127.0.0.1"
+                        peripherals:
+                          type: array
+                          items:
+                            $ref: "#/definitions/Peripheral"
+
+        "422":
+          description: "Rising validations and controlled exceptions"
+          schema:
+            $ref: "#/definitions/422Response"
+
+        "500":
+          description: "Exception not controlled"
+          schema:
+            $ref: "#/definitions/422Response"
+  /peripherals:
+    get:
+      tags:
+      - Peripheral
+      summary: "Get all"
+      description: "Getting all peripherals"
+      operationId: "getAllPer"
+      produces:
+      - "application/json"
+      responses:
+        "200":
+          description: "Successful operation"
+          schema:
+            properties:
+              success:
+                type: boolean
+              response:
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/definitions/Peripheral'
+
+        "422":
+          description: "Rising validations and controlled exceptions"
+          schema:
+            $ref: "#/definitions/422Response"
+
+        "500":
+          description: "Exception not controlled"
+          schema:
+            $ref: "#/definitions/422Response"
+    post:
+      tags:
+      - Peripheral
+      summary: "Add"
+      description: "Adding a peripheral device"
+      operationId: "addPer"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Payload. Incoming data"
+        required: true
+        schema:
+          properties:
+            uid:
+              type: number
+              example: 123412345622341
+            vendor:
+              type: string
+              example: "VENDOR_NAME_1"
+            status:
+              type: string
+              example: "online"
+              enum:
+                - online
+                - offline
+
+      responses:
+        "201":
+          description: "Successful operation"
+          schema:
+            properties:
+              success:
+                type: boolean
+              response:
+                properties:
+                  data:
+                    $ref: '#/definitions/Peripheral'
+
+        "422":
+          description: "Rising validations and controlled exceptions"
+          schema:
+            $ref: "#/definitions/422Response"
+
+        "500":
+          description: "Exception not controlled"
+          schema:
+            $ref: "#/definitions/422Response"
+  /peripherals/{id}:
+    get:
+      tags:
+      - Peripheral
+      summary: "Get by id"
+      description: "Getting a peripheral by id"
+      operationId: "getByIdPer"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "path"
+        name: "id"
+        required: true
+        description: "Peripheral id"
+        type: number
+      responses:
+        "200":
+          description: "Successful operation"
+          schema:
+            properties:
+              success:
+                type: boolean
+              response:
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/definitions/Peripheral'
+
+        "422":
+          description: "Rising validations and controlled exceptions"
+          schema:
+            $ref: "#/definitions/422Response"
+
+        "500":
+          description: "Exception not controlled"
+          schema:
+            $ref: "#/definitions/422Response"
+    delete:
+      tags:
+      - Peripheral
+      summary: "Delete by id"
+      description: "Deleting a peripheral by id"
+      operationId: "deleteByIdPer"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "path"
+        name: "id"
+        required: true
+        description: "Peripheral id"
+        type: number
+      responses:
+        "200":
+          description: "Successful operation"
+          schema:
+            properties:
+              success:
+                type: boolean
+              response:
+                properties:
+                  data:
+                    type: string
+                    example: "Deleted"
+
+        "422":
+          description: "Rising validations and controlled exceptions"
+          schema:
+            $ref: "#/definitions/422Response"
+
+        "500":
+          description: "Exception not controlled"
+          schema:
+            $ref: "#/definitions/422Response"
+  /peripherals/{idPer}/gateways/{idGtw}:
+    post:
+      tags:
+      - Peripheral
+      summary: "Add to Gateway"
+      description: "Adding a peripheral to a gateway"
+      operationId: "addPerToGtw"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "path"
+        name: "idPer"
+        required: true
+        description: "Peripheral id"
+        type: number
+      - in: "path"
+        name: "idGtw"
+        required: true
+        description: "Gateway id"
+        type: number
+
+      responses:
+        "200":
+          description: "Successful operation"
+          schema:
+            properties:
+              success:
+                type: boolean
+              response:
+                properties:
+                  data:
+                    properties:
+                      id:
+                        type: number
+                        example: 1
+                      uid:
+                        type: number
+                        example: 123412345622341
+                      vendor:
+                        type: string
+                        example: "VENDOR_NAME_1"
+                      created_at:
+                        type: "string"
+                        example: "2022-04-16T22:40:35.033"
+                        format: "yyyy-MM-ddTHH:mm:ss:SSS"
+                      status:
+                        type: string
+                        example: "online"
+                        enum:
+                          - online
+                          - offline
+                      gateway:
+                        $ref: '#/definitions/Gateway'
+
+        "422":
+          description: "Rising validations and controlled exceptions"
+          schema:
+            $ref: "#/definitions/422Response"
+
+        "500":
+          description: "Exception not controlled"
+          schema:
+            $ref: "#/definitions/422Response"
+  /peripherals/{idPer}/gateways:
+    delete:
+      tags:
+      - Peripheral
+      summary: "Remove from gateway"
+      description: "Removing a peripheral from a gateway"
+      operationId: "removeByIdPer"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "path"
+        name: "idPer"
+        required: true
+        description: "Peripheral id"
+        type: number
+      responses:
+        "200":
+          description: "Successful operation"
+          schema:
+            properties:
+              success:
+                type: boolean
+              response:
+                properties:
+                  data:
+                    properties:
+                      id:
+                        type: number
+                        example: 1
+                      uid:
+                        type: number
+                        example: 123412345622341
+                      vendor:
+                        type: string
+                        example: "VENDOR_NAME_1"
+                      created_at:
+                        type: "string"
+                        example: "2022-04-16T22:40:35.033"
+                        format: "yyyy-MM-ddTHH:mm:ss:SSS"
+                      status:
+                        type: string
+                        example: "online"
+                        enum:
+                          - online
+                          - offline
+                      gateway:
+                        example: null
+
+        "422":
+          description: "Rising validations and controlled exceptions"
+          schema:
+            $ref: "#/definitions/422Response"
+
+        "500":
+          description: "Exception not controlled"
+          schema:
+            $ref: "#/definitions/422Response"

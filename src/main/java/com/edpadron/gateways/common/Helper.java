@@ -33,7 +33,6 @@ public class Helper {
 
     public Map<String, Object> peripheralToMap(Peripheral peripheral){
         Map<String, Object> objectMap = mapper().convertValue(peripheral, Map.class);
-        Long a = peripheral.getGateway().getIdg();
         objectMap.put("gateway", peripheral.getGateway());
         return objectMap;
     }
@@ -58,6 +57,7 @@ public class Helper {
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
         mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        mapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
         return mapper;
     }
 }
