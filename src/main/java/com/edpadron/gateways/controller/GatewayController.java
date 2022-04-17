@@ -7,10 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
-import java.io.IOException;
 
 @RestController()
 public class GatewayController {
@@ -38,7 +36,12 @@ public class GatewayController {
 
     @GetMapping("/gateways/{id}")
     public ResponseEntity<?> getById(@PathVariable Long id) {
-        return helper.httpResponse(true, gatewayService.getGatewayById(id), HttpStatus.OK);
+        return helper.httpResponse(true, gatewayService.getGatewayDetailsById(id), HttpStatus.OK);
+    }
+
+    @GetMapping("/gateways/details")
+    public ResponseEntity<?> getAllGatewaysDetails(){
+        return helper.httpResponse(true, gatewayService.getAllGatewaysDetails(), HttpStatus.OK);
     }
 
 

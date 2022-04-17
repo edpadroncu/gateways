@@ -173,6 +173,11 @@ public class GlobalRestExceptionHandler extends ResponseEntityExceptionHandler {
         return CustomValidationErrors(ex);
     }
 
+    @ExceptionHandler({ CustomException.class })
+    public ResponseEntity<?> handleAll(CustomException ex, WebRequest request) {
+        return CustomValidationErrors(ex);
+    }
+
     private ResponseEntity<?> CustomValidationErrors(Exception ex) {
         logger.error(ex.getClass().getName() + " " + ex.getLocalizedMessage());
         ApiError apiError = new ApiError("Validation error", ex.getMessage());

@@ -1,7 +1,9 @@
 package com.edpadron.gateways.service;
 
+import com.edpadron.gateways.common.Helper;
+import com.edpadron.gateways.entity.Gateway;
 import com.edpadron.gateways.entity.Peripheral;
-import com.edpadron.gateways.exceptions.ApiError;
+import com.edpadron.gateways.exceptions.CustomException;
 import com.edpadron.gateways.exceptions.StatusException;
 import com.edpadron.gateways.exceptions.UidException;
 import com.edpadron.gateways.repository.PeripheralRepository;
@@ -12,9 +14,9 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import javax.validation.ValidationException;
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -24,6 +26,12 @@ public class PeripheralService {
 
     @Autowired
     private PeripheralRepository peripheralRepository;
+
+    @Autowired
+    private GatewayService gatewayService;
+
+    @Autowired
+    private Helper helper;
 
     public Peripheral addPeripheral(Peripheral peripheral){
         if (!peripheral.isValidStatus())
@@ -45,15 +53,37 @@ public class PeripheralService {
             peripheralRepository.deleteById(id);
         }
         catch (EmptyResultDataAccessException ex){
-            throw new ValidationException("Id value not found: " + id);
+            throw new ValidationException("Peripheral id not found: " + id);
         }
         return "Deleted";
     }
 
     public Peripheral getPeripheralById(Long id){
-        Optional<Peripheral> medication = peripheralRepository.findById(id);
-        if (!medication.isPresent())
-            throw new ValidationException("Id value not found: " + id);
-        return medication.get();
+        Optional<Peripheral> peripheral = peripheralRepository.findById(id);
+        if (!peripheral.isPresent())
+            throw new ValidationException("Peripheral id not found: " + id);
+        return peripheral.get();
     }
+
+    public Map<String, Object> addPerToGtw(Long peripheralId, Long gatewayId){
+        Peripheral peripheral = getPeripheralById(peripheralId);
+        Gateway gateway = gatewayService.getGatewayById(gatewayId);
+        if (peripheralRepository.countAllByGateway(gateway) >= 10)
+            throw new CustomException("No more than 10 peripheral devices are allowed for a gateway");
+        peripheral.setGateway(gateway);
+        Peripheral saved = peripheralRepository.save(peripheral);
+        return helper.peripheralToMap(saved);
+    }
+
+    public Map<String, Object> removePerFromGtw(Long peripheralId){
+        Peripheral peripheral = getPeripheralById(peripheralId);
+        peripheral.setGateway(null);
+        Peripheral saved = peripheralRepository.save(peripheral);
+        return helper.peripheralToMap(saved);
+    }
+
+    public List<Peripheral> peripheralsByGateway(Gateway gateway){
+        return peripheralRepository.getAllByGateway(gateway);
+    }
+
 }

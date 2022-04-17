@@ -7,11 +7,12 @@ info:
   contact:
     email: "edpadron.cu@gmail.com"
 host: "localhost:8080"
-#basePath: "/api"
+basePath: "/api"
 tags:
 - name: "Gateway"
   description: "Services related to gateways management"
 
 schemes:
-- "http"
-#- "https"
+#- "http"
+- "https"
+
