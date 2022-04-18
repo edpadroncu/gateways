@@ -16,36 +16,33 @@ public class PeripheralController {
     @Autowired
     private PeripheralService peripheralService;
 
-    @Autowired
-    private Helper helper;
-
     @GetMapping("/peripherals")
     public ResponseEntity<?> getAll(){
-        return helper.httpResponse(true, peripheralService.getAllPeripheral(), HttpStatus.OK);
+        return Helper.httpResponse(true, peripheralService.getAllPeripheral(), HttpStatus.OK);
     }
 
     @PostMapping("/peripherals")
     public ResponseEntity<?> add(@Valid @RequestBody Peripheral peripheral) {
-        return helper.httpResponse(true, peripheralService.addPeripheral(peripheral), HttpStatus.CREATED);
+        return Helper.httpResponse(true, peripheralService.addPeripheral(peripheral), HttpStatus.CREATED);
     }
 
     @DeleteMapping("/peripherals/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id) {
-        return helper.httpResponse(true, peripheralService.deletePeripheralById(id), HttpStatus.OK);
+        return Helper.httpResponse(true, peripheralService.deletePeripheralById(id), HttpStatus.OK);
     }
 
     @GetMapping("/peripherals/{id}")
     public ResponseEntity<?> getById(@PathVariable Long id) {
-        return helper.httpResponse(true, peripheralService.getPeripheralById(id), HttpStatus.OK);
+        return Helper.httpResponse(true, peripheralService.getPeripheralById(id), HttpStatus.OK);
     }
 
     @PostMapping("/peripherals/{idPer}/gateways/{idGtw}")
     public ResponseEntity<?> addPerToGtw(@PathVariable Long idPer, @PathVariable Long idGtw) {
-        return helper.httpResponse(true, peripheralService.addPerToGtw(idPer, idGtw), HttpStatus.OK);
+        return Helper.httpResponse(true, peripheralService.addPerToGtw(idPer, idGtw), HttpStatus.OK);
     }
 
     @DeleteMapping("/peripherals/{idPer}/gateways")
     public ResponseEntity<?> deleteFromGtw(@PathVariable Long idPer) {
-        return helper.httpResponse(true, peripheralService.removePerFromGtw(idPer), HttpStatus.OK);
+        return Helper.httpResponse(true, peripheralService.removePerFromGtw(idPer), HttpStatus.OK);
     }
 }

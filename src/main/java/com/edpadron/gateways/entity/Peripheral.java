@@ -26,6 +26,13 @@ public class Peripheral implements Serializable {
         this.gateway = gateway;
     }
 
+    public Peripheral(String uid, String vendor, LocalDateTime created_at, String status) {
+        this.uid = uid;
+        this.vendor = vendor;
+        this.created_at = created_at;
+        this.status = status;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")

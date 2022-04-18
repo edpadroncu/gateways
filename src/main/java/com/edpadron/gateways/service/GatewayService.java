@@ -4,16 +4,13 @@ import com.edpadron.gateways.common.Helper;
 import com.edpadron.gateways.entity.Gateway;
 import com.edpadron.gateways.exceptions.Ipv4Exception;
 import com.edpadron.gateways.repository.GatewayRepository;
-import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 
 import javax.validation.ValidationException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -24,11 +21,16 @@ public class GatewayService {
 
     @Autowired
     private GatewayRepository gt;
-
     private GatewayRepository gatewayRepository;
 
     @Autowired
-    private Helper helper;
+    private PeripheralService ps;
+    private PeripheralService peripheralService;
+
+    public GatewayService(GatewayRepository gatewayRepository, PeripheralService peripheralService) {
+        this.gatewayRepository = gatewayRepository;
+        this.peripheralService = peripheralService;
+    }
 
     public GatewayService(GatewayRepository gatewayRepository) {
         this.gatewayRepository = gatewayRepository;
@@ -36,9 +38,16 @@ public class GatewayService {
 
     //get
     public GatewayRepository getGatewayRepository() {
-        if (gatewayRepository == null)
+        if (this.gatewayRepository == null)
             this.gatewayRepository = gt;
         return this.gatewayRepository;
+    }
+
+    //get
+    public PeripheralService getPeripheralService() {
+        if (this.peripheralService == null)
+            this.peripheralService = ps;
+        return this.peripheralService;
     }
 
     public Gateway addGateway(Gateway gateway){
@@ -70,11 +79,27 @@ public class GatewayService {
 
     public Map<String, Object> getGatewayDetailsById(Long id){
         Gateway gateway = getGatewayById(id);
-        return helper.gatewayToMap(gateway);
+        return gatewayToMap(gateway);
     }
 
     public List<Map<String, Object>> getAllGatewaysDetails(){
-        return helper.gatewayListToMap(getGatewayRepository().findAll());
+        return gatewayListToMap(getGatewayRepository().findAll());
+    }
+
+    private Map<String, Object> gatewayToMap(Gateway gateway){
+        Map<String, Object> objectMap = Helper.mapper().convertValue(gateway, Map.class);
+        objectMap.put("peripherals", getPeripheralService().peripheralsByGateway(gateway));
+        return objectMap;
+    }
+
+    private List<Map<String, Object>> gatewayListToMap(List<Gateway> gateways){
+        List<Map<String, Object>> list = new ArrayList<>();
+        for (Gateway gateway: gateways) {
+            Map<String, Object> objectMap = Helper.mapper().convertValue(gateway, Map.class);
+            objectMap.put("peripherals", getPeripheralService().peripheralsByGateway(gateway));
+            list.add(objectMap);
+        }
+        return list;
     }
 
 }

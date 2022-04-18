@@ -16,32 +16,29 @@ public class GatewayController {
     @Autowired
     private GatewayService gatewayService;
 
-    @Autowired
-    private Helper helper;
-
     @GetMapping("/gateways")
     public ResponseEntity<?> getAll(){
-        return helper.httpResponse(true, gatewayService.getAllGateways(), HttpStatus.OK);
+        return Helper.httpResponse(true, gatewayService.getAllGateways(), HttpStatus.OK);
     }
 
     @PostMapping("/gateways")
     public ResponseEntity<?> add(@Valid @RequestBody Gateway gateway) {
-        return helper.httpResponse(true, gatewayService.addGateway(gateway), HttpStatus.CREATED);
+        return Helper.httpResponse(true, gatewayService.addGateway(gateway), HttpStatus.CREATED);
     }
 
     @DeleteMapping("/gateways/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id) {
-        return helper.httpResponse(true, gatewayService.deleteGatewayById(id), HttpStatus.OK);
+        return Helper.httpResponse(true, gatewayService.deleteGatewayById(id), HttpStatus.OK);
     }
 
     @GetMapping("/gateways/{id}")
     public ResponseEntity<?> getById(@PathVariable Long id) {
-        return helper.httpResponse(true, gatewayService.getGatewayDetailsById(id), HttpStatus.OK);
+        return Helper.httpResponse(true, gatewayService.getGatewayDetailsById(id), HttpStatus.OK);
     }
 
     @GetMapping("/gateways/details")
     public ResponseEntity<?> getAllGatewaysDetails(){
-        return helper.httpResponse(true, gatewayService.getAllGatewaysDetails(), HttpStatus.OK);
+        return Helper.httpResponse(true, gatewayService.getAllGatewaysDetails(), HttpStatus.OK);
     }
 
 

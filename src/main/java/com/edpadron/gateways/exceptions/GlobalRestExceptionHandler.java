@@ -39,7 +39,7 @@ public class GlobalRestExceptionHandler extends ResponseEntityExceptionHandler {
     protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
         String message = ex.getCause() instanceof InvalidFormatException ? "Field with invalid format." : "Incorrect payload.";
         ApiError apiError = new ApiError(message, "JSON request incorrect.", ex.getCause().getMessage());
-        return helper.httpResponse(false, apiError, HttpStatus.BAD_REQUEST);
+        return Helper.httpResponse(false, apiError, HttpStatus.BAD_REQUEST);
     }
 
     @Override
@@ -54,7 +54,7 @@ public class GlobalRestExceptionHandler extends ResponseEntityExceptionHandler {
         }
 
         ApiError apiError = new ApiError("Arguments validation", errors);
-        return helper.httpResponse(false, apiError, HttpStatus.UNPROCESSABLE_ENTITY);
+        return Helper.httpResponse(false, apiError, HttpStatus.UNPROCESSABLE_ENTITY);
     }
 
     @Override
@@ -63,7 +63,7 @@ public class GlobalRestExceptionHandler extends ResponseEntityExceptionHandler {
         String error = ex.getValue() + " value for " + ex.getPropertyName() + " should be of type " + ex.getRequiredType();
 
         ApiError apiError = new ApiError(ex.getLocalizedMessage(), error);
-        return helper.httpResponse(false, apiError, HttpStatus.UNPROCESSABLE_ENTITY);
+        return Helper.httpResponse(false, apiError, HttpStatus.UNPROCESSABLE_ENTITY);
     }
 
     @Override
@@ -71,7 +71,7 @@ public class GlobalRestExceptionHandler extends ResponseEntityExceptionHandler {
         logger.error(ex.getClass().getName() + " " + ex.getLocalizedMessage());
         String error = ex.getRequestPartName() + " part is missing";
         ApiError apiError = new ApiError(ex.getLocalizedMessage(), error);
-        return helper.httpResponse(false, apiError, HttpStatus.UNPROCESSABLE_ENTITY);
+        return Helper.httpResponse(false, apiError, HttpStatus.UNPROCESSABLE_ENTITY);
     }
 
     @Override
@@ -79,7 +79,7 @@ public class GlobalRestExceptionHandler extends ResponseEntityExceptionHandler {
         logger.error(ex.getClass().getName() + " " + ex.getLocalizedMessage());
         String error = ex.getParameterName() + " missing parameter";
         ApiError apiError = new ApiError(ex.getLocalizedMessage(), error);
-        return helper.httpResponse(false, apiError, HttpStatus.UNPROCESSABLE_ENTITY);
+        return Helper.httpResponse(false, apiError, HttpStatus.UNPROCESSABLE_ENTITY);
     }
 
     @ExceptionHandler({ MethodArgumentTypeMismatchException.class })
@@ -88,7 +88,7 @@ public class GlobalRestExceptionHandler extends ResponseEntityExceptionHandler {
         String error = ex.getName() + " should be of type " + ex.getRequiredType().getName();
 
         ApiError apiError = new ApiError(ex.getLocalizedMessage(), error);
-        return helper.httpResponse(false, apiError, HttpStatus.UNPROCESSABLE_ENTITY );
+        return Helper.httpResponse(false, apiError, HttpStatus.UNPROCESSABLE_ENTITY );
     }
 
     @ExceptionHandler({ ConstraintViolationException.class })
@@ -100,7 +100,7 @@ public class GlobalRestExceptionHandler extends ResponseEntityExceptionHandler {
         }
 
         ApiError apiError = new ApiError("Validation error", errors);
-        return helper.httpResponse(false, apiError, HttpStatus.UNPROCESSABLE_ENTITY);
+        return Helper.httpResponse(false, apiError, HttpStatus.UNPROCESSABLE_ENTITY);
     }
 
     @ExceptionHandler({ org.springframework.dao.DataIntegrityViolationException.class })
@@ -114,7 +114,7 @@ public class GlobalRestExceptionHandler extends ResponseEntityExceptionHandler {
         }
 
         ApiError apiError = new ApiError("Database validation error", message);
-        return helper.httpResponse(false, apiError, HttpStatus.UNPROCESSABLE_ENTITY);
+        return Helper.httpResponse(false, apiError, HttpStatus.UNPROCESSABLE_ENTITY);
     }
 
     @ExceptionHandler({ ValidationException.class })
@@ -123,7 +123,7 @@ public class GlobalRestExceptionHandler extends ResponseEntityExceptionHandler {
         List<String> errors = new ArrayList<>();
         errors.add(ex.getMessage());
         ApiError apiError = new ApiError("Validation error", errors);
-        return helper.httpResponse(false, apiError, HttpStatus.UNPROCESSABLE_ENTITY);
+        return Helper.httpResponse(false, apiError, HttpStatus.UNPROCESSABLE_ENTITY);
     }
 
     @Override
@@ -131,7 +131,7 @@ public class GlobalRestExceptionHandler extends ResponseEntityExceptionHandler {
         logger.error(ex.getClass().getName() + " " + ex.getLocalizedMessage());
         String error = "No handler found for " + ex.getHttpMethod() + " " + ex.getRequestURL();
         ApiError apiError = new ApiError(ex.getLocalizedMessage(), error);
-        return helper.httpResponse(false, apiError, HttpStatus.NOT_FOUND);
+        return Helper.httpResponse(false, apiError, HttpStatus.NOT_FOUND);
     }
 
     @Override
@@ -142,7 +142,7 @@ public class GlobalRestExceptionHandler extends ResponseEntityExceptionHandler {
         builder.append(" method is not supported for this request. Supported methods are ");
         ex.getSupportedHttpMethods().forEach(t -> builder.append(t + " "));
         ApiError apiError = new ApiError(ex.getLocalizedMessage(), builder.toString());
-        return helper.httpResponse(false, apiError, HttpStatus.METHOD_NOT_ALLOWED);
+        return Helper.httpResponse(false, apiError, HttpStatus.METHOD_NOT_ALLOWED);
     }
 
     @Override
@@ -153,14 +153,14 @@ public class GlobalRestExceptionHandler extends ResponseEntityExceptionHandler {
         builder.append(" media type is not supported. Supported media types are ");
         ex.getSupportedMediaTypes().forEach(t -> builder.append(t + " "));
         ApiError apiError = new ApiError(ex.getLocalizedMessage(), builder.substring(0, builder.length() - 2));
-        return helper.httpResponse(false, apiError, HttpStatus.UNSUPPORTED_MEDIA_TYPE);
+        return Helper.httpResponse(false, apiError, HttpStatus.UNSUPPORTED_MEDIA_TYPE);
     }
 
     @ExceptionHandler({ Ipv4Exception.class })
     public ResponseEntity<?> handleAll(Ipv4Exception ex, WebRequest request) {
         logger.error(ex.getClass().getName() + " " + ex.getLocalizedMessage());
         ApiError apiError = new ApiError("Validation error", ex.getMessage());
-        return helper.httpResponse(false, apiError, HttpStatus.INTERNAL_SERVER_ERROR);
+        return Helper.httpResponse(false, apiError, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler({ StatusException.class })
@@ -181,7 +181,7 @@ public class GlobalRestExceptionHandler extends ResponseEntityExceptionHandler {
     private ResponseEntity<?> CustomValidationErrors(Exception ex) {
         logger.error(ex.getClass().getName() + " " + ex.getLocalizedMessage());
         ApiError apiError = new ApiError("Validation error", ex.getMessage());
-        return helper.httpResponse(false, apiError, HttpStatus.UNPROCESSABLE_ENTITY);
+        return Helper.httpResponse(false, apiError, HttpStatus.UNPROCESSABLE_ENTITY);
     }
 
     @ExceptionHandler({ Exception.class })
@@ -189,7 +189,7 @@ public class GlobalRestExceptionHandler extends ResponseEntityExceptionHandler {
         logger.error(ex.getClass().getName() + " " + ex.getLocalizedMessage());
         ex.printStackTrace();
         ApiError apiError = new ApiError(ex.getLocalizedMessage(), "Sorry, something went wrong...");
-        return helper.httpResponse(false, apiError, HttpStatus.INTERNAL_SERVER_ERROR);
+        return Helper.httpResponse(false, apiError, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
 }

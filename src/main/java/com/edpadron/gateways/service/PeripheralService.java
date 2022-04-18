@@ -8,8 +8,6 @@ import com.edpadron.gateways.exceptions.StatusException;
 import com.edpadron.gateways.exceptions.UidException;
 import com.edpadron.gateways.repository.PeripheralRepository;
 import lombok.NoArgsConstructor;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
@@ -26,14 +24,16 @@ public class PeripheralService {
 
     @Autowired
     private PeripheralRepository pr;
-
     private PeripheralRepository peripheralRepository;
 
     @Autowired
+    private GatewayService gs;
     private GatewayService gatewayService;
 
-    @Autowired
-    private Helper helper;
+    public PeripheralService(PeripheralRepository peripheralRepository, GatewayService gatewayService) {
+        this.peripheralRepository = peripheralRepository;
+        this.gatewayService = gatewayService;
+    }
 
     public PeripheralService(PeripheralRepository peripheralRepository) {
         this.peripheralRepository = peripheralRepository;
@@ -44,6 +44,13 @@ public class PeripheralService {
         if (this.peripheralRepository == null)
             this.peripheralRepository = pr;
         return this.peripheralRepository;
+    }
+
+    //get
+    public GatewayService getGatewayService() {
+        if (this.gatewayService == null)
+            this.gatewayService = gs;
+        return this.gatewayService;
     }
 
     public Peripheral addPeripheral(Peripheral peripheral){
@@ -80,23 +87,29 @@ public class PeripheralService {
 
     public Map<String, Object> addPerToGtw(Long peripheralId, Long gatewayId){
         Peripheral peripheral = getPeripheralById(peripheralId);
-        Gateway gateway = gatewayService.getGatewayById(gatewayId);
+        Gateway gateway = getGatewayService().getGatewayById(gatewayId);
         if (getPeripheralRepository().countAllByGateway(gateway) >= 10)
             throw new CustomException("No more than 10 peripheral devices are allowed for a gateway");
         peripheral.setGateway(gateway);
         Peripheral saved = getPeripheralRepository().save(peripheral);
-        return helper.peripheralToMap(saved);
+        return peripheralToMap(saved);
     }
 
     public Map<String, Object> removePerFromGtw(Long peripheralId){
         Peripheral peripheral = getPeripheralById(peripheralId);
         peripheral.setGateway(null);
         Peripheral saved = getPeripheralRepository().save(peripheral);
-        return helper.peripheralToMap(saved);
+        return peripheralToMap(saved);
     }
 
     public List<Peripheral> peripheralsByGateway(Gateway gateway){
         return getPeripheralRepository().getAllByGateway(gateway);
+    }
+
+    public Map<String, Object> peripheralToMap(Peripheral peripheral){
+        Map<String, Object> objectMap = Helper.mapper().convertValue(peripheral, Map.class);
+        objectMap.put("gateway", peripheral.getGateway());
+        return objectMap;
     }
 
 }
