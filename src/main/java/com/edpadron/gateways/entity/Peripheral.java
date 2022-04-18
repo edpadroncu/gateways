@@ -2,6 +2,7 @@ package com.edpadron.gateways.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -11,8 +12,9 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.regex.Pattern;
 
-@NoArgsConstructor
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name="peripheral")
 @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})

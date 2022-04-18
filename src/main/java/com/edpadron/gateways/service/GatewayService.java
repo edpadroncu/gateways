@@ -86,7 +86,7 @@ public class GatewayService {
         return gatewayListToMap(getGatewayRepository().findAll());
     }
 
-    private Map<String, Object> gatewayToMap(Gateway gateway){
+    public Map<String, Object> gatewayToMap(Gateway gateway){
         Map<String, Object> objectMap = Helper.mapper().convertValue(gateway, Map.class);
         objectMap.put("peripherals", getPeripheralService().peripheralsByGateway(gateway));
         return objectMap;

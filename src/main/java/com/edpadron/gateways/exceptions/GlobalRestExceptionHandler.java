@@ -32,9 +32,6 @@ import java.util.regex.Pattern;
 @ControllerAdvice
 public class GlobalRestExceptionHandler extends ResponseEntityExceptionHandler {
 
-    @Autowired
-    private Helper helper;
-
     @Override
     protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
         String message = ex.getCause() instanceof InvalidFormatException ? "Field with invalid format." : "Incorrect payload.";
