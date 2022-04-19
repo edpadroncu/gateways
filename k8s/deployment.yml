@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gateways
+  labels:
+    name: gateways
+spec:
+  selector:
+    matchLabels:
+      app: gateways
+  replicas: 1
+  template:
+    metadata:
+      labels:
+         app: gateways
+    spec:
+      containers:
+        - name: gateways
+          image: gateways:latest
+          imagePullPolicy: "Always"
+          ports:
+            - containerPort: 8080
+                     
+      
