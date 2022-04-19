@@ -16,6 +16,11 @@ public class GatewayController {
     @Autowired
     private GatewayService gatewayService;
 
+    @GetMapping(value = "/")
+    public ResponseEntity<?> root(){
+        return Helper.httpResponse(true, "Welcome to Gateways - Management API REST", HttpStatus.OK);
+    }
+
     @GetMapping("/gateways")
     public ResponseEntity<?> getAll(){
         return Helper.httpResponse(true, gatewayService.getAllGateways(), HttpStatus.OK);
